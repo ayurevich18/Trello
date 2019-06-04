@@ -12,7 +12,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.util.List;
 
 public class BasePage {
-    private WebDriver driver;
+    public WebDriver driver;
 
     public BasePage(WebDriver driver) {
         this.driver = driver;
@@ -32,7 +32,7 @@ public class BasePage {
         return driver.findElements(element);
     }
 
-    public void textInput(By element, String text) {
+    public void sendText(By element, String text) {
         WebElement elem = find(element);
         elem.clear();
         elem.sendKeys(text);
