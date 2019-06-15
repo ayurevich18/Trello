@@ -20,7 +20,7 @@ public class ParseFilmPage {
     @Test
     public void parsePage() throws IOException {
 
-        Map<String,String> directorRate= new HashMap<>();
+
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder().url("https://www.imdb.com/chart/top?ref_=nv_mv_250").build();
         Response response = client.newCall(request).execute();
@@ -35,8 +35,6 @@ public class ParseFilmPage {
 //            System.out.println(filmsUrls);
             topfilms.add(filmsUrls);
         }
-
-
 
 
         for (int i = 0; i < 30; i++) {
@@ -64,8 +62,6 @@ public class ParseFilmPage {
                 if (r1.equals("")) {
                     r1 = "120 min";
                 }
-                System.out.println(r1);
-                System.out.println(urls);
 
                 int runtime = Integer.parseInt(r1.substring(0, r1.indexOf("m") - 1));
                 directors.add(director);
@@ -76,17 +72,7 @@ public class ParseFilmPage {
 
 
         }
-        HashMap<String, Integer> hm = new HashMap<String, Integer>();
-        Integer item;
-        for (String wrd : directors) {
 
-
-            item = hm.get(wrd);
-            if (item == null) hm.put(wrd, 1); // если нет в списке то добавить со значением 1
-            else hm.put(wrd, item + 1); // если есть такая фамилия(Key), то +1
-        }
-
-        System.out.println(hm);
         System.out.println("************************************");
 
         /* 1. Отсортировать список фильмов по году выхода и вывести в консоль */
@@ -108,20 +94,62 @@ public class ParseFilmPage {
         System.out.println(filmPages.get(0));
         System.out.println("************************************");
 
+        /* 4.Вывести в консоль список директоров с кол-вом фильмов в топ 250   */
+        HashMap<String, Integer> directorQtyFilms = new HashMap<>();
+        Integer qtyFilms;
+        for (String name : directors) {
+            qtyFilms = directorQtyFilms.get(name);
+            if (qtyFilms == null) directorQtyFilms.put(name, 1);
+            else directorQtyFilms.put(name, qtyFilms + 1);
+        }
+        for (String d : directorQtyFilms.keySet()) {
+            String value = directorQtyFilms.get(d).toString();
+            System.out.println(d + ": - " + value);
 
+        }
+        System.out.println("************************************");
 
-
+        /*5. Вывести в консоль список директоров со средней оценкой по всех их фильмам в топ 250, отсортировать по средней оценке их фильмов*/
+        HashMap<String, Double> directorsRate = new HashMap<>();
+        Double rate;
         Set<String> directorsList = filmPages.stream().map(film -> film.director).collect(Collectors.toSet());
-        for(String i:directorsList){
-            System.out.println("********************1");
-            System.out.println(i);
-            System.out.println("********************1");
+        for (String name : directorsList) {
+            for (int q = 0; q < filmPages.size(); q++) {
+                rate = directorsRate.get(name);
+                if (name.equals(filmPages.get(q).director)) {
+                    if (rate == null)
+                        directorsRate.put(name, filmPages.get(q).rating); // если нет в списке то добавить со значением 1
+                    else
+                        directorsRate.put(name, rate + (filmPages.get(q).rating)); // если есть такая фамилия(Key), то +1
+
+                }
+            }
+
         }
 
 
+        List<Directors> directors1 = new ArrayList<>();
+        for (String name : directors) {
+            Double qtyFilm = 0.0;
+            Double filmsRateDouble = 0.0;
+            Double average;
+
+            qtyFilm = (directorQtyFilms.get(name)).doubleValue();
 
 
-        directorRate.put("","");
+            filmsRateDouble = directorsRate.get(name);
+
+
+            average = filmsRateDouble / qtyFilm;
+            directors1.add(new Directors(name, average));
+
+        }
+        Collections.sort(directors1, new SortByRate());
+        for (Directors dir : directors1) {
+            System.out.println(dir);
+
+        }
+        System.out.println("************************************");
 
 
     }
