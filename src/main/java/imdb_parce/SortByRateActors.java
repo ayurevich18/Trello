@@ -2,12 +2,9 @@ package imdb_parce;
 
 import java.util.Comparator;
 
-public class SortByRate implements Comparator<Directors> {
+public class SortByRateActors implements Comparator<Actors> {
     @Override
-    public int compare(Directors o1, Directors o2) {
+    public int compare(Actors o1, Actors o2) {
         return (o1.filmRate < o2.filmRate) ? -1 : ((o1.filmRate == o2.filmRate) ? 0 : 1);
     }
-
-
-
 }
