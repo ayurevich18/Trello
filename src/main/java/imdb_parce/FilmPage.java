@@ -1,18 +1,20 @@
 package imdb_parce;
 
+import java.util.List;
+
 public class FilmPage implements Comparable {
     public String filmName;
     public double rating;
     public String director;
     public int metascore;
     public int year;
-    public String actors;
+    public List<String> actors;
     public String genres;
     public int runtime;
     public String urlDirector;
 
 
-    public FilmPage(String filmName, double rating,String director,int metascore,int year,String actors,String genres, int runtime,String urlDirector){
+    public FilmPage(String filmName, double rating,String director,int metascore,int year,List<String> actors,String genres, int runtime,String urlDirector){
         this.filmName=filmName;
         this.rating=rating;
         this.director=director;

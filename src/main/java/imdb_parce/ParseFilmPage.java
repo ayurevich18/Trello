@@ -56,7 +56,7 @@ public class ParseFilmPage {
                 }
                 int metascore = Integer.parseInt(a);
                 int year = Integer.parseInt(element.select("#titleYear > a").text());
-                String actors = element.select(".plot_summary :nth-child(4) :nth-child(2)").text();
+                List<String> actors = Collections.singletonList(element.select(".plot_summary :nth-child(4)>a").text());
                 String genres = element.select(".subtext :nth-child(4)").text();
                 String r1 = element.select(".txt-block > time[datetime]").text();
                 if (r1.equals("")) {
@@ -71,6 +71,10 @@ public class ParseFilmPage {
             }
 
 
+        }
+
+        for(int i=0;i<filmPages.size();i++){
+            System.out.println(filmPages.get(i).actors);
         }
 
         System.out.println("************************************");
