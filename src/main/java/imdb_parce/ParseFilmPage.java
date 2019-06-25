@@ -15,12 +15,10 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 
-
 public class ParseFilmPage {
 
     @Test
-    public void parsePage() throws IOException,IllegalArgumentException {
-
+    public void parsePage() throws IOException, IllegalArgumentException {
 
 
         OkHttpClient client = new OkHttpClient();
@@ -33,12 +31,10 @@ public class ParseFilmPage {
         List<String> directors = new ArrayList<>();
 
         HashMap<String, Integer> actorsQtyFilms = new HashMap<>();
-         Integer filmsQty;
+        Integer filmsQty;
         HashMap<String, Double> actorsRate = new HashMap<>();
         Double acotorRate;
-        List<String>actors=new ArrayList<>();
-
-
+        List<String> actors = new ArrayList<>();
 
 
         Document document = Jsoup.parse(html);
@@ -50,7 +46,7 @@ public class ParseFilmPage {
         }
 
 
-        for (int i = 0; i < 250; i++) {
+        for (int i = 0; i < 30; i++) {
             String urls = topfilms.get(i);
 
             Request request1 = new Request.Builder().url("https://www.imdb.com" + urls + "\"").build();
@@ -78,23 +74,21 @@ public class ParseFilmPage {
 
                 int runtime = Integer.parseInt(r1.substring(0, r1.indexOf("m") - 1));
                 directors.add(director);
-                filmPages.add(new FilmPage(filmName, rating, director, metascore, year,urlActors , genres, runtime, urlDirector));
+                filmPages.add(new FilmPage(filmName, rating, director, metascore, year, urlActors, genres, runtime, urlDirector));
 
                 Request request2 = new Request.Builder().url("https://www.imdb.com" + urls + "\"").build();
                 Response response2 = client.newCall(request2).execute();
                 String html2 = response2.body().string();
                 Document document2 = Jsoup.parse(html2);
                 Elements elements2 = document2.select(".odd>td:nth-child(2) >a, .even >td:nth-child(2) >a");
-                for (Element element1:elements2) {
+                for (Element element1 : elements2) {
                     actors.add(element1.text());
-                    filmsQty=actorsQtyFilms.get(element1.text());
+                    filmsQty = actorsQtyFilms.get(element1.text());
                     if (filmsQty == null) actorsQtyFilms.put(element1.text(), 1);
                     else actorsQtyFilms.put(element1.text(), filmsQty + 1);
-                    acotorRate=actorsRate.get(element1.text());
-                    if(acotorRate==null) actorsRate.put(element1.text(), rating);
-                    else actorsRate.put(element1.text(), acotorRate+rating);
-
-
+                    acotorRate = actorsRate.get(element1.text());
+                    if (acotorRate == null) actorsRate.put(element1.text(), rating);
+                    else actorsRate.put(element1.text(), acotorRate + rating);
 
 
                 }
@@ -103,7 +97,6 @@ public class ParseFilmPage {
 
 
         }
-
 
 
         System.out.println("************************************");
@@ -186,16 +179,16 @@ public class ParseFilmPage {
 
 
         /*6. Вывести в консоль список актеров с кол-вом фильмов в которых они играют из списка топ 250*/
-        for (String i:actorsQtyFilms.keySet()) {
-            String value=actorsQtyFilms.get(i).toString();
+        for (String i : actorsQtyFilms.keySet()) {
+            String value = actorsQtyFilms.get(i).toString();
             System.out.println(i + ": - " + value);
 
         }
         System.out.println("************************************");
 
         /*7. Вывести в консоль список список актеров со средней оценкой по всех их фильмам в топ 250, отсортировать по средней оценке их фильмов*/
-        List<Actors> actors1=new ArrayList<>();
-        for (String name:actors) {
+        List<Actors> actors1 = new ArrayList<>();
+        for (String name : actors) {
             Double qtyFilm = 0.0;
             Double filmsRateDouble = 0.0;
             Double average;
@@ -204,17 +197,17 @@ public class ParseFilmPage {
             filmsRateDouble = actorsRate.get(name);
 
             average = filmsRateDouble / qtyFilm;
-            actors1.add(new Actors(name,average));
+            actors1.add(new Actors(name, average));
         }
 
 
+        Collections.sort(actors1, new SortByRateActors());
 
-        Collections.sort(actors1,new SortByRateActors());
-        for (Actors act:actors1) {
+
+        for (Actors act : actors1) {
             System.out.println(act);
 
         }
-
 
 
     }
